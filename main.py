@@ -1,11 +1,16 @@
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt, math
 from knapsack import K
 
-r = [0, 0, 0, 0, 0, 0]
-iterations = 1000
+iterations = 100
+K.setItemCount(6)
+perm_range = range(math.factorial(K.item_count))
+
+r = [] # permutation scores
+for _ in perm_range:
+    r.append(0)
 
 for _ in range(iterations):
-    K.init(3)
+    K.init()
     # K.printSpecs()
 
     for i in range(len(K.item_orders)):
@@ -19,16 +24,18 @@ for _ in range(iterations):
 
 m = max(r)
 
-for i in range(len(r)):
+for i in perm_range:
     r[i] = round( r[i] / m, 2 )
 
-print(r)
+bar_arr = []
+for i in perm_range:
+    bar_arr.append(i)
 
-plt.bar([0,1,2,3,4,5], r)
+plt.bar(bar_arr, r)
  
 plt.xlabel('Permutation no.')
 plt.ylabel('Performance (perm. points = size * weight - waste_space)\n')
-plt.title(f'Three item knapsack problem, trial count {iterations}.\n'\
+plt.title(f'{K.item_count} item knapsack problem, trial count {iterations}.\n'\
             'Items are ordered by size (asc). Randomized values:\n'\
             'sizes, weigths, sack_vol (with limitations). For\n'\
             'each indexing permutation, items are added from left\n'\

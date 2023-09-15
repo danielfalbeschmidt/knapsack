@@ -1,4 +1,5 @@
 import random
+from heapalgorithm import HeapAlgorithm
 
 class K:
 
@@ -12,12 +13,17 @@ class K:
    item_orders = [] # values for indexing K.sizes
    perm_inds = [] # indices of permutations used in item_orders
 
-   def init(item_count):
+
+   def setItemCount(n):
+      K.item_count = n
+
+
+   def init():
       K.weights = []
       K.sizes = []
       K.perm_inds = []
 
-      for _ in range(item_count):
+      for _ in range(K.item_count):
          K.sizes.append(random.randint(1, K.max_item_size))
          K.weights.append(random.randint(1, K.max_item_weight))
 
@@ -77,16 +83,15 @@ class K:
 
 
    def getPermutations():
-      # heap's algorithm would be great
-      # HeapAlgorithm.getPermutations( len(self.items) - 1 )
-      return [
-           [0, 1, 2]
-         , [0, 2, 1]
-         , [1, 0, 2]
-         , [1, 2, 0]
-         , [2, 0, 1]
-         , [2, 1, 0]
-      ]
+      return HeapAlgorithm.getPermutations(K.item_count)
+      # return [
+      #      [0, 1, 2]
+      #    , [0, 2, 1]
+      #    , [1, 0, 2]
+      #    , [1, 2, 0]
+      #    , [2, 0, 1]
+      #    , [2, 1, 0]
+      # ]
    
 
    def fillSack(item_order):
