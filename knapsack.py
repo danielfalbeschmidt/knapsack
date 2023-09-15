@@ -3,8 +3,8 @@ from heapalgorithm import HeapAlgorithm
 
 class K:
 
-   max_item_size = 10000000000 # big values for big randomness
-   max_item_weight = 10000000000
+   max_item_size = 10000 # big values for big randomness
+   max_item_weight = 10000 # remarkably enough, size and weight appear to not have significant effect on favorable permutations
    # item_count = 3 # use wisely, permutation count becomes the factorial of item_count
    item_count = 3 # !!! for now, only item_count of 3 is supported
    weights = [1, 2, 3] # item "goodness" values, i.e. greater is better (pure gold!)
@@ -12,6 +12,11 @@ class K:
    sack_vol = 11 # must be less than the sum of items
    item_orders = [] # values for indexing K.sizes
    perm_inds = [] # indices of permutations used in item_orders
+   permutations = []
+
+
+   def setPermutations():
+      K.permutations = HeapAlgorithm.getPermutations(K.item_count)
 
 
    def setItemCount(n):
@@ -42,13 +47,11 @@ class K:
    def getItemOrders(): # filter overlapping permutations
       item_orders = [] # unique list of item index lists that fit the sack
 
-      permutations = K.getPermutations()
-
-      item_orders.append(K.getLimitedItems(permutations[0]))
+      item_orders.append(K.getLimitedItems(K.permutations[0]))
       K.perm_inds.append(0)
 
       i = 0
-      for p in permutations[1:]:
+      for p in K.permutations[1:]:
          i += 1
 
          # get as many items of this p that can fit the sack
@@ -80,18 +83,6 @@ class K:
       for items in item_orders:
          if set(items) == set(compare_order): return True
       return False
-
-
-   def getPermutations():
-      return HeapAlgorithm.getPermutations(K.item_count)
-      # return [
-      #      [0, 1, 2]
-      #    , [0, 2, 1]
-      #    , [1, 0, 2]
-      #    , [1, 2, 0]
-      #    , [2, 0, 1]
-      #    , [2, 1, 0]
-      # ]
    
 
    def fillSack(item_order):
@@ -109,6 +100,14 @@ class K:
       # goal: minimize spare_space and maximize product_sum
       return product_sum - spare_space
    
+   def getBestPermutations(index_list):
+      best_perms = []
+
+      for i in index_list:
+         best_perms.append(K.permutations[i])
+
+      return best_perms
+
 
    
 

@@ -28,6 +28,7 @@ class HeapAlgorithm:
 
     def generate():
         a = []
+        HeapAlgorithm.permutations = []
 
         for i in range(HeapAlgorithm.item_count):
             a.append(i)
