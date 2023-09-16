@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt, math
 from knapsack import K
 
 iterations = 100 # number of score counting trials
-item_count = 6 # how many items are permutated
+item_count = 7 # how many items are permutated
 count_fact = math.factorial(item_count)
 perm_range = range(count_fact)
 
