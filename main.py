@@ -1,78 +1,95 @@
 import matplotlib.pyplot as plt, math
 from knapsack import K
 
-iterations = 100 # number of score counting trials
-item_count = 7 # how many items are permutated
-count_fact = math.factorial(item_count)
-perm_range = range(count_fact)
+start_perms = 3 # item count at the beginning
+stop_perms = 10 # end (not included)
 
-top_score_lim = 100 # number of tier 2 permutations
-if count_fact < top_score_lim: top_score_lim = count_fact
+# partially determines the score collecting iteration count:
+hardness = math.factorial(stop_perms)
 
-K.setItemCount(item_count)
-K.setPermutations()
+for n in range(start_perms, stop_perms):
+    item_count = n # how many items are permutated
+    count_fact = math.factorial(item_count)
+    perm_range = range(count_fact)
 
-scores = [] # score tracking per each permutation
-for _ in perm_range:
-    scores.append(0)
+    K.setItemCount(item_count)
+    K.setPermutations()
 
-for _ in range(iterations):
-    K.init()
-    # K.printSpecs()
+    scores = [] # score tracking per each permutation
+    for _ in perm_range:
+        scores.append(0)
 
-    for i in range(len(K.item_orders)):
-        perm_index = K.perm_inds[i]
-        item_order = K.item_orders[i]
-        
-        sack_state = K.fillSack(item_order)
-        
-        scores[perm_index] += sack_state
+    iterations = int(hardness / count_fact) # number of score counting trials
+    for _ in range(iterations):
+        K.init()
 
-best_inds = set() # indices of top score permutations
-for _ in range(top_score_lim):
-    m = max(scores)
-    i = scores.index(m)
-    best_inds.add(i)
-    scores[i] = 0 # zero after recording to get updated max on next iter
+        for i in range(len(K.item_orders)):
+            perm_index = K.perm_inds[i]
+            item_order = K.item_orders[i]
+            
+            sack_state = K.fillSack(item_order)
+            
+            scores[perm_index] += sack_state
 
-best_perms = K.getBestPermutations(best_inds)
-K.permutations = best_perms
-K.init()
-r = range(len(best_perms))
 
-scores = []
-for i in r:
-    scores.append(0)
 
-for i in range(len(K.item_orders)):
-    perm_index = K.perm_inds[i]
-    item_order = K.item_orders[i]
+
+
+    score_map = {} # score : index
+    max_score = max(scores)
+    score_lim = max_score / 10
+    for i in perm_range:
+        score = scores[i]
+        if score < score_lim: continue
+        score_map[score] = i
+
+    sorted_scores = sorted(scores)
+    sorted_scores.reverse()
+
+    top_perm_inds = []
+
+    for score in sorted_scores:
+        if score not in score_map: continue
+        top_perm_inds.append(score_map[score])
     
-    sack_state = K.fillSack(item_order)
+    top_perms = []
+    for i in top_perm_inds:
+        top_perms.append(K.permutations[i])
+
+    for i in top_perm_inds:
+        print(K.permutations[i])
+
+    print('')
     
-    scores[perm_index] += sack_state
-
-k = K.permutations[scores.index(max(scores))]
-for x in k:
-    print(f'ordinal: {x}, size: {K.sizes[x]}, weight: {K.weights[x]}')
 
 
-# for i in perm_range:
-#     r[i] = round( r[i] / m, 2 )
 
-# bar_arr = []
-# for i in perm_range:
-#     bar_arr.append(i)
 
-# plt.bar(bar_arr, r)
- 
-# plt.xlabel('Permutation no.')
-# plt.ylabel('Performance (perm. points = size * weight - waste_space)\n')
-# plt.title(f'{K.item_count} item knapsack problem, trial count {iterations}.\n'\
-#             'Items are ordered by size (asc). Randomized values:\n'\
-#             'sizes, weigths, sack_vol (with limitations). For\n'\
-#             'each indexing permutation, items are added from left\n'\
-#             'to right until no room for next.')
-# plt.show()
+
+    # index_ratios = []
+    # perms = []
+    # max_score = max(scores)
+    # half_max_score = max_score / 2
+
+    # for i in perm_range:
+    #     score = scores[i]
+    #     if score < half_max_score: continue
+    #     index_ratios.append(i / count_fact)
+    #     perms.append(K.permutations[i])
+
+    # print(perms)
+
+
+
+
+
+    # bar_arr = []
+    # for i in perm_range:
+    #     bar_arr.append(i)
+
+    # plt.bar(bar_arr, scores)
+    
+    # plt.show()
+
 
 

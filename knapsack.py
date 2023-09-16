@@ -3,10 +3,9 @@ from heapalgorithm import HeapAlgorithm
 
 class K:
 
-   max_item_size = 10000 # big values for big randomness
-   max_item_weight = 10000 # remarkably enough, size and weight appear to not have significant effect on favorable permutations
-   # item_count = 3 # use wisely, permutation count becomes the factorial of item_count
-   item_count = 3 # !!! for now, only item_count of 3 is supported
+   max_item_size = 1000 # big values for big randomness
+   max_item_weight = 1000
+   item_count = 3 # use wisely, permutation count becomes the factorial of item_count
    weights = [1, 2, 3] # item "goodness" values, i.e. greater is better (pure gold!)
    sizes = [3, 4, 5] # item sizes in relation to sack_vol
    sack_vol = 11 # must be less than the sum of items
