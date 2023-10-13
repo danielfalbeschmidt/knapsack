@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from knapsack import K
 
 r = [0, 0, 0, 0, 0, 0]
-iterations = 1000
+iterations = 10000
 
 for _ in range(iterations):
     K.init(3)
