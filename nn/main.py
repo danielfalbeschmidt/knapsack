@@ -1,19 +1,22 @@
 from item import *
+from size import *
 from sack import *
+from ml import *
 from reserve import *
 
-Reserve.create(27)
-Sack.setVolume(4)
+Sack.setVolume(9)
+Reserve.create(81)
 
-Reserve.printDetails()
-Sack.printDetails()
+for _ in range(10000):
+    while True:
+        random_item = Reserve.pickRandom()
+        if not random_item: continue
+        if not Sack.add(random_item): break
 
-while True:
-    random_item = Reserve.pickRandom()
-    if not random_item: continue
-    if not Sack.add(random_item): break
+    Ml.learn()
 
-print('\nSack filled\n')
+    Reserve.reset()
+    Reserve.create(81)
+    Sack.empty()
 
-Reserve.printDetails()
-Sack.printDetails()
+Ml.printDetails()

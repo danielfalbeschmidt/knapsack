@@ -1,4 +1,5 @@
 from item import *
+from size import *
 
 class Reserve:
     count = 0 # total number of created items
@@ -7,6 +8,13 @@ class Reserve:
     small = [] # item volume categories
     medium = []
     large = []
+
+    def reset():
+        Reserve.total_volume = 0
+
+        Reserve.small = [] # item volume categories
+        Reserve.medium = []
+        Reserve.large = []
 
     def create(count=9):
         Reserve.count = count
@@ -47,14 +55,17 @@ class Reserve:
         index = 0
         
         for _ in iterator:
+            sorted_items[index].category = Size.SMALL
             Reserve.small.append(sorted_items[index])
             index += 1
         
         for _ in iterator:
+            sorted_items[index].category = Size.MEDIUM
             Reserve.medium.append(sorted_items[index])
             index += 1
 
         while index < Reserve.count:
+            sorted_items[index].category = Size.LARGE
             Reserve.large.append(sorted_items[index])
             index += 1
 
@@ -62,17 +73,17 @@ class Reserve:
         total = 0
 
         for item in items:
-            total += item.value
+            total += item.volume
 
         return total
 
     def printDetails():
         print('*** RESERVE ***')
-        print(f'Reserve total volume: {Reserve.total_volume}')
+        print(f'Reserve total volume: {round(Reserve.total_volume, 3)}')
         print('Reserve item volumes by categories:')
         print(f'  Small:  {Reserve.itemsToString(Reserve.small)}')
         print(f'  Medium: {Reserve.itemsToString(Reserve.medium)}')
-        print(f'  Large:  {Reserve.itemsToString(Reserve.large)}')
+        print(f'  Large:  {Reserve.itemsToString(Reserve.large)}\n')
 
     def itemsToString(list):
         list_string = ''
