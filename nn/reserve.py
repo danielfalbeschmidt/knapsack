@@ -1,37 +1,26 @@
 from item import *
-from size import *
 
 class Reserve:
-    count = 0 # total number of created items
-    total_volume = 0
+    def __init__(self, count=0):
+        self.small = []
+        self.medium = []
+        self.large = []
 
-    small = [] # item volume categories
-    medium = []
-    large = []
+        self.count = count
+        items = self.populate()
+        self.total_volume = self.getTotalVolume(items)        
+        sorted_items = self.sortByVolume(items)
+        self.categorize(sorted_items)
 
-    def reset():
-        Reserve.total_volume = 0
-
-        Reserve.small = [] # item volume categories
-        Reserve.medium = []
-        Reserve.large = []
-
-    def create(count=9):
-        Reserve.count = count
-        items = Reserve.populate()
-        Reserve.total_volume = Reserve.getTotalVolume(items)        
-        sorted_items = Reserve.sortByVolume(items)
-        Reserve.categorize(sorted_items)
-
-    def populate():
+    def populate(self):
         items = []
 
-        for _ in range(Reserve.count):
+        for _ in range(self.count):
             items.append(Item())
 
         return items
     
-    def sortByVolume(items):
+    def sortByVolume(self, items):
         sorted_items = []
         moved_item = items.pop()
         sorted_items.append(moved_item)
@@ -49,27 +38,15 @@ class Reserve:
 
         return sorted_items
 
+    def categorize(self, items):
+        for item in items:
+            if item.volume_category == Measure.SMALL:
+                self.small.append(item)
+            elif item.volume_category == Measure.MEDIUM:
+                self.medium.append(item)
+            else: self.large.append(item)
 
-    def categorize(sorted_items):
-        iterator = range(int(Reserve.count / 3))
-        index = 0
-        
-        for _ in iterator:
-            sorted_items[index].category = Size.SMALL
-            Reserve.small.append(sorted_items[index])
-            index += 1
-        
-        for _ in iterator:
-            sorted_items[index].category = Size.MEDIUM
-            Reserve.medium.append(sorted_items[index])
-            index += 1
-
-        while index < Reserve.count:
-            sorted_items[index].category = Size.LARGE
-            Reserve.large.append(sorted_items[index])
-            index += 1
-
-    def getTotalVolume(items):
+    def getTotalVolume(self, items):
         total = 0
 
         for item in items:
@@ -77,15 +54,15 @@ class Reserve:
 
         return total
 
-    def printDetails():
+    def printDetails(self):
         print('*** RESERVE ***')
-        print(f'Reserve total volume: {round(Reserve.total_volume, 3)}')
-        print('Reserve item volumes by categories:')
-        print(f'  Small:  {Reserve.itemsToString(Reserve.small)}')
-        print(f'  Medium: {Reserve.itemsToString(Reserve.medium)}')
-        print(f'  Large:  {Reserve.itemsToString(Reserve.large)}\n')
+        print(f'Total volume: {round(self.total_volume, 3)}')
+        print('Item volumes by categories:')
+        print(f'  Small:  {self.itemsToString(self.small)}')
+        print(f'  Medium: {self.itemsToString(self.medium)}')
+        print(f'  Large:  {self.itemsToString(self.large)}\n')
 
-    def itemsToString(list):
+    def itemsToString(self, list):
         list_string = ''
 
         for item in list:
@@ -93,29 +70,52 @@ class Reserve:
         
         return list_string
     
-    def pickRandom():
+    def pickRandom(self):
         lot = random.randint(1, 3)
 
         if lot == 1:
-            return Reserve.pickSmall()
+            return self.pickSmall()
         elif lot == 2:
-            return Reserve.pickMedium()
-        else: return Reserve.pickLarge()
+            return self.pickMedium()
+        else: return self.pickLarge()
 
-    def pickSmall():
-        if not Reserve.small: return
-        item = Reserve.small.pop()
-        Reserve.total_volume -= item.volume
+    def pickSmall(self):
+        if not self.small: return
+        item = self.small.pop(random.randint(0, len(self.small) - 1))
+        self.total_volume -= item.volume
         return item
 
-    def pickMedium():
-        if not Reserve.medium: return
-        item = Reserve.medium.pop()
-        Reserve.total_volume -= item.volume
+    def pickMedium(self):
+        if not self.medium: return
+        item = self.medium.pop(random.randint(0, len(self.medium) - 1))
+        self.total_volume -= item.volume
         return item
 
-    def pickLarge():
-        if not Reserve.large: return
-        item = Reserve.large.pop()
-        Reserve.total_volume -= item.volume
+    def pickLarge(self):
+        if not self.large: return
+        item = self.large.pop(random.randint(0, len(self.large) - 1))
+        self.total_volume -= item.volume
         return item
+
+    def getDistributions(self):
+        s_sum = len(self.small) + len(self.medium) + len(self.large)
+        s1 = len(self.small) / s_sum
+        s2 = len(self.medium) / s_sum
+        s3 = len(self.large) / s_sum
+
+        # volumes, weights: SMALL, MEDIUM, LARGE
+        distributions = [s1, s2, s3, 0, 0, 0]
+
+        all_items = self.small + self.medium + self.large
+
+        for item in all_items:
+            if item.weight_category == Measure.SMALL:
+                distributions[3] += 1
+            elif item.weight_category == Measure.MEDIUM:
+                distributions[4] += 1
+            else: distributions[5] += 1
+
+        for i in range(3, 6):
+            distributions[i] /= len(all_items)
+
+        return distributions
