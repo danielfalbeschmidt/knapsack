@@ -21,6 +21,7 @@ class Ml:
 
     def feed(volume_dist, success_rate):
         if 0 in volume_dist or success_rate < 1: return
+        
         success_rate /= Ml.learning_rate
 
         # previous weights, inversely proportional to success_rate

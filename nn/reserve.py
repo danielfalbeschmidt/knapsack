@@ -71,13 +71,16 @@ class Reserve:
         return list_string
     
     def pickRandom(self):
-        lot = random.randint(1, 3)
+        item = None
 
-        if lot == 1:
-            return self.pickSmall()
-        elif lot == 2:
-            return self.pickMedium()
-        else: return self.pickLarge()
+        while not item:
+            lot = random.randint(1, 3)
+            
+            if lot == 1: item = self.pickSmall()
+            elif lot == 2: item = self.pickMedium()
+            else: item = self.pickLarge()
+
+        return item
 
     def pickSmall(self):
         if not self.small: return
