@@ -2,7 +2,7 @@ import random, math
 from sack import *
 
 class Ml:
-    learning_rate = 1 # bigger for less sensitivity
+    learning_rate = 100 # bigger for less sensitivity
 
     w_small = 1 / 3
     w_medium = 1 / 3
