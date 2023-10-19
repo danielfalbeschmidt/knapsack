@@ -81,6 +81,18 @@ class Reserve:
             else: item = self.pickLarge()
 
         return item
+    
+    def pickWithDistr(self, distr):
+        item = None
+
+        while not item:
+            lot = random.random()
+
+            if lot < distr[0]: item = self.pickSmall()
+            elif lot < distr[0] + distr[1]: item = self.pickMedium()
+            else: item = self.pickLarge()
+
+        return item
 
     def pickSmall(self):
         if not self.small: return

@@ -83,8 +83,8 @@ class Sack:
         print(f'Space left: {round(self.space, 3)}')
         print(f'Space occupied: {round(self.volume - self.space, 3)}')
         print(f'Items total value: {round(self.getTotalValue(), 3)}')
-        print(f'Distributions [volumes 3, weights 3]: {self.getVolumeDistributions()}')
-        print(f'Item category values: {self.itemsToString()}\n')
+        print(f'Distributions [volumes 3, weights 3]: {self.getVolumeDistribution()}')
+        # print(f'Item category values: {self.itemsToString()}\n')
 
     def itemsToString(self):
         list_string = ''

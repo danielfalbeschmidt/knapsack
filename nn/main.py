@@ -6,7 +6,7 @@ from reserve import *
 
 Ml.init_weights()
 
-max_learn_iter = 10000
+max_learn_iter = 1
 reserve_item_count = 100
 
 sack_volume = int(reserve_item_count / 10)
@@ -48,3 +48,38 @@ for _ in range(max_learn_iter):
     Ml.feed(volume_distrs[best_rate_index], success_rates[best_rate_index])
 
     Ml.printDetails()
+
+
+l1 = 0
+l2 = 0
+
+for _ in range(1000):
+
+    reserve = Reserve(reserve_item_count)
+
+
+    sack_1 = Sack(sack_volume)
+
+    while True:
+        picked_item = reserve.pickRandom()
+
+        if not picked_item: continue
+        if not sack_1.add(picked_item): break
+
+
+    sack_2 = Sack(sack_volume)
+
+    while True:
+        picked_item = reserve.pickWithDistr((0.98, 0.01, 0.01))
+
+        if not picked_item: continue
+        if not sack_2.add(picked_item): break
+
+    print(sack_2.getVolumeDistribution())
+
+    l1 += sack_1.getTotalValue()
+    l2 += sack_2.getTotalValue()
+
+print(l1, l2)
+
+
