@@ -4,25 +4,66 @@ import random
 
 class Reserve:
     def __init__(self):
-        self.item_count = Settings.reserve_item_count
-        self.items = self.populate()
+        self.item_count = S.reserve_item_count
 
-    def populate(self):
+        while True: # all reserve contents should not fit a sack
+            self.item_categories = self.getItemCategories()
+            if self.getTotalVolume() > S.sack_volume: break
+
+    def getItemCategories(self):
         all_items = []
-
-        for _ in range(Settings.volume_category_count):
+        
+        for _ in range(S.volume_category_count):
             all_items.append([])
 
-        for _ in range(Settings.reserve_item_count):
+        for _ in range(S.reserve_item_count):
             item = Item()
-            category_index = int(item.volume * 10)
+            category_index = int(item.volume * S.volume_category_count)
 
             all_items[category_index].append(item)
 
         return all_items
+
+    def getTotalVolume(self):
+        total_volume = 0
+
+        for category in self.item_categories:
+            for item in category:
+                total_volume += item.volume
+
+        return total_volume
     
     def pickRandom(self):
-        category = self.items[random.randint(0, Settings.volume_category_count - 1)]
+        for _ in range(1000): # watchdog for bad luck
+            category = self.item_categories[random.randint(0, S.volume_category_count - 1)]
+            if not category: continue # maybe another category has items...
 
-        if not category: return
-        return category[random.randint(0, len(category) - 1)]
+            return category.pop()
+        
+        print('Could not pick random item from reserve')
+
+    def getVolumeDistribution(self):
+        distr = []
+
+        for i in range(S.volume_category_count):
+            distr.append(len(self.item_categories[i]))
+
+        for i in range(S.volume_category_count):
+            distr[i] /= S.reserve_item_count
+
+        return distr
+    
+    def getWeightDistribution(self):
+        distr = []
+
+        for _ in range(S.weight_category_count):
+            distr.append(0)
+
+        for category in self.item_categories:
+            for item in category:
+                distr[item.weight_category] += 1
+
+        for i in range(S.weight_category_count):
+            distr[i] /= S.reserve_item_count
+
+        return distr

@@ -3,7 +3,7 @@ from item import *
 
 class Sack:
     def __init__(self):
-        self.volume = Settings.sack_volume
+        self.volume = S.sack_volume
         self.space = self.volume # empty space left in the sack
         self.items = [] # sack contents: item objs + empty space
 
@@ -38,22 +38,19 @@ class Sack:
 
         return total
     
-    def sortItemsByVolume(self):
-        sorted_items = []
-        moved_item = self.items.pop()
-        sorted_items.append(moved_item)
+    def getVolumeDistribution(self):
+        distr = []
 
-        while self.items:
-            moved_item = self.items.pop()
+        for _ in range(S.volume_category_count):
+            distr.append(0)
 
-            for index in range(len(sorted_items)):
-                if moved_item.volume < sorted_items[index].volume:
-                    sorted_items.insert(index, moved_item)
-                    break
+        for item in self.items:
+            distr[item.volume_category] += 1
 
-            else: sorted_items.insert(len(sorted_items), moved_item)
+        for i in range(S.volume_category_count):
+            distr[i] /= len(self.items)
 
-        self.items = sorted_items
+        return distr
     
     def printDetails(self):
         print('*** SACK ***')

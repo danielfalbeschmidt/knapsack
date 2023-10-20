@@ -1,3 +1,4 @@
+from settings import *
 import random
 
 class Item:
@@ -5,8 +6,8 @@ class Item:
         self.volume = random.random()
         self.weight = random.random()
 
-        self.volume_category = int(self.volume * 10)
-        self.weight_category = int(self.weight * 10)
+        self.volume_category = int(self.volume * S.volume_category_count)
+        self.weight_category = int(self.weight * S.volume_category_count)
 
         self.value =  self.weight * self.volume
 
