@@ -12,7 +12,7 @@ def getFilledSack(reserve):
 
 
 filename = datetime.datetime.now()
-file = open(f'./v3/data/{filename}', 'w')
+file = open(f'./data/{filename}', 'w')
 file.write(S.toString())
 file.write('DATA START\n')
 file.close()
@@ -34,6 +34,8 @@ for _ in range(S.total_iterations):
         sack_distrs.append(filled_sack.getVolumeDistribution())
         sack_values.append(filled_sack.getTotalValue())
 
+    if not sack_distrs: continue
+
     best_sack_index = sack_values.index(max(sack_values))
     best_sack_distr = sack_distrs[best_sack_index]
 
@@ -46,11 +48,11 @@ for _ in range(S.total_iterations):
         best_sack_distr
         ) )
 
-    file = open(f'./v3/data/{filename}', 'a')
+    file = open(f'./data/{filename}', 'a')
     file.write(f'{data_str}\n')
     file.close()
 
 
-file = open(f'./v3/data/{filename}', 'a')
+file = open(f'./data/{filename}', 'a')
 file.write('DATA END\n')
 file.close()

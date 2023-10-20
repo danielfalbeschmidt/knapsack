@@ -3,7 +3,7 @@ class S:
     weight_category_count = 6 # arbitrary
 
     reserve_item_count = 60 # affects data creation computation time
-    sack_volume = reserve_item_count / 5 # heuristical, too small value -> all items fit (no point regarding KP)
+    sack_volume = reserve_item_count / 6 # heuristical, too small value -> all items fit (no point regarding KP)
 
     iterations_per_reserve = 1000 # arbitrary
     total_iterations = 100000 # arbitrary
