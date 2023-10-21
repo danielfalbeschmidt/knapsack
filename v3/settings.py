@@ -1,14 +1,26 @@
 class S:
-    volume_category_count = 6 # arbitrary
-    weight_category_count = 6 # arbitrary
+    volume_category_count = 3
+    weight_category_count = 3
 
     reserve_item_count = 60 # affects data creation computation time
-    sack_volume = reserve_item_count / 6 # heuristical, too small value -> all items fit (no point regarding KP)
 
-    iterations_per_reserve = 1000 # arbitrary
-    total_iterations = 100000 # arbitrary
+    # heuristical, too small value -> all items fit (no point in KP)
+    sack_volume = reserve_item_count / 6
 
-    data_description = '(([ reserve_volume_distr ], [ reserve_weight_distr ]), [ winner_sack_volume_distr ])'
+    iterations_per_reserve = 100 # one is the winner of this number of sacks per reserve
+    total_iterations = 1000000 # training sample count
+
+    data_description = 'reserve_volume_distr,reserve_weight_distr,winner_sack_volume_distr'
+
+    path = './data'
+    datafile = f'{path}/2023-10-20 09:09:32.450666'
+    modelfile = f'{path}/model.json'
+    weightsfile = f'{path}/model_weights.h5'
+    data_start_str = 'DATA START'
+
+    hidden_layer_count = 1
+    train_ratio = 0.9
+    epoch_count = 2
 
     def toString():
         return \
