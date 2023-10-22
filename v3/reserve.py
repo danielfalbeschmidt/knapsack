@@ -36,11 +36,28 @@ class Reserve:
     def pickRandom(self):
         for _ in range(1000): # watchdog for bad luck
             category = self.item_categories[random.randint(0, S.volume_category_count - 1)]
+
             if not category: continue # maybe another category has items...
 
             return category.pop()
         
         print('Could not pick random item from reserve')
+
+    def pickSmallestVolume(self):
+        for i in range(len(self.item_categories)):
+            category = self.item_categories[i]
+
+            if not category: continue # maybe another category has items...
+
+            volumes = []
+            for item in category:
+                volumes.append(item.volume)
+
+            smallest_volume_index = volumes.index(min(volumes))
+            smallest_volume_item = category[smallest_volume_index]
+
+            del self.item_categories[i][smallest_volume_index]
+            return smallest_volume_item
 
     def getVolumeDistribution(self):
         distr = []
