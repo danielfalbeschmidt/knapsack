@@ -52,6 +52,20 @@ class Sack:
 
         return distr
     
+    def getWeightDistribution(self):
+        distr = []
+
+        for _ in range(S.weight_category_count):
+            distr.append(0)
+
+        for item in self.items:
+            distr[item.weight_category] += 1
+
+        for i in range(S.weight_category_count):
+            distr[i] /= len(self.items)
+
+        return distr
+    
     def printDetails(self):
         print('*** SACK ***')
         print(f'Total volume: {round(self.volume, 3)}')

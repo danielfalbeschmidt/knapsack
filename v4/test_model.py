@@ -53,9 +53,6 @@ for _ in range(S.total_iterations):
     worst_sack_index = sack_values.index(min(sack_values))
     worst_sack_distr = sack_distrs[worst_sack_index]
 
-    print(f'best sack distr:\t{best_sack_distr}')
-    print(f'worst sack distr:\t{worst_sack_distr}')
-
     input_data = reserve.getVolumeDistribution() + reserve.getWeightDistribution()
     # Assuming your input data is in a variable 'input_data'
     # Reshape the input data to have two dimensions

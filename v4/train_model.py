@@ -10,6 +10,9 @@ for i in range(100): # the data starts earlier...
     if S.data_start_str in data_rows[i]:
         data_rows = data_rows[ i + 1 : ]
 
+    
+vol_count = S.volume_category_count
+wgt_count = S.weight_category_count
 
 train_input = []
 train_output = []
@@ -26,9 +29,6 @@ for i in range(train_count):
 
     for i in range(len(data)):
         data[i] = float(data[i])
-    
-    vol_count = S.volume_category_count
-    wgt_count = S.weight_category_count
 
     train_input.append( data[ : vol_count + wgt_count ] )
     train_output.append( data[ vol_count + wgt_count : ] )
@@ -38,9 +38,6 @@ for i in range(train_count, len(data_rows)):
 
     for i in range(len(data)):
         data[i] = float(data[i])
-    
-    vol_count = S.volume_category_count
-    wgt_count = S.weight_category_count
 
     test_input.append( data[ : vol_count + wgt_count ] )
     test_output.append( data[ vol_count + wgt_count : ] )
