@@ -48,3 +48,45 @@ class Reserve:
                 min_vol = self.items[i].volume
 
         if min_ind: return self.items[min_ind]
+
+    def getItemVolumeSum(self, picks):
+        s = 0
+
+        for i in range(S.reserve_item_count):
+            if round(picks[i]): s += self.items[i].volume
+
+        return s
+
+    def getItemWeightSum(self, picks):
+        s = 0
+
+        for i in range(S.reserve_item_count):
+            if round(picks[i]): s += self.items[i].weight
+
+        return s
+
+    def getItemValueSum(self, picks):
+        s = 0
+
+        for i in range(S.reserve_item_count):
+            if round(picks[i]): s += self.items[i].volume * self.items[i].weight
+
+        return s
+
+    def getWeightToVolumeSum(self, picks):
+        s = 0
+
+        for i in range(S.reserve_item_count):
+            if round(picks[i]): s += self.items[i].weight / self.items[i].volume
+
+        return s
+
+    def printDetails(self):
+        print('*** RESREVE ***')
+
+        print('Items:')
+        for item in self.items:
+            print(f'\tvolume:\t{round(item.volume, 3)}', end='\t')
+            print(f'\tweight:\t{round(item.weight, 3)}', end='\t')
+            print(f'\tvalue:\t{round(item.value, 3)}', end='\t')
+            print(f'\tweight / volume:\t{round(( item.weight / item.volume ), 3)}')

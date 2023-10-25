@@ -17,14 +17,9 @@ def getFilledSack(reserve):
     return sack
 
 
-# filename = datetime.datetime.now()
-# file = open(f'{S.path}/{filename}', 'w')
-# file.write(S.toString())
-# file.write(f'{S.data_start_str}\n')
-# file.close()
-
-
 reserve = Reserve()
+
+print(f'Sack capacity: {S.sack_volume}')
 
 for __ in range(S.total_iterations):
     picked_items = []
@@ -68,16 +63,46 @@ for __ in range(S.total_iterations):
     for i in c: cumul_picks[i] /= max_cumul
 
 
-    for p in cumul_picks:
-        print(round(p), end='')
+    vol_sum = reserve.getItemVolumeSum(cumul_picks)
+
+    while vol_sum < S.sack_volume:
+        unused_inds = []
+        unused_vals = []
+
+        for i in range(S.reserve_item_count):
+            if not round(cumul_picks[i]):
+                unused_inds.append(i)
+                unused_vals.append(cumul_picks[i])
+
+        unused_max_ind = unused_inds[unused_vals.index(max(unused_vals))]
+        cumul_picks[unused_max_ind] = 1
+
+        vol_sum = reserve.getItemVolumeSum(cumul_picks)
+
+    while vol_sum > S.sack_volume:
+        used_inds = []
+        used_vals = []
+
+        for i in range(S.reserve_item_count):
+            if round(cumul_picks[i]):
+                used_inds.append(i)
+                used_vals.append(cumul_picks[i])
+
+        used_max_ind = used_inds[used_vals.index(min(used_vals))]
+        cumul_picks[used_max_ind] = 0
+
+        vol_sum = reserve.getItemVolumeSum(cumul_picks)
+
+
+    for i in c: cumul_picks[i] = round(cumul_picks[i])
+
+
+    print(f'Volume: {round(reserve.getItemVolumeSum(cumul_picks), 3)}', end='\t')
+    print(f'Weight: {round(reserve.getItemWeightSum(cumul_picks), 3)}', end='\t')
+    print(f'Value: {round(reserve.getItemValueSum(cumul_picks), 3)}', end='\t')
+    print(f'Weight / Volume: {round(reserve.getWeightToVolumeSum(cumul_picks), 3)}', end='\t\t')
+    print(f'Picked items: ', end='\t')
+    for pick in cumul_picks:
+        print(pick, end='')
     print('')
     
-
-
-    # data_str = str(data_list)
-    # data_str = data_str[1:-1]
-    # data_str = data_str.replace(' ', '')
-
-    # file = open(f'{S.path}/{filename}', 'a')
-    # file.write(f'{data_str}\n')
-    # file.close()

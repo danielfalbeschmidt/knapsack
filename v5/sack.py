@@ -18,32 +18,29 @@ class Sack:
     def getTotalVolume(self):
         total = 0
 
-        for item in self.items:
-            total += item.volume
+        for item in self.items: total += item.volume
 
         return total
 
     def getTotalWeight(self):
         total = 0
 
-        for item in self.items:
-            total += item.weight
+        for item in self.items: total += item.weight
 
         return total
 
     def getTotalValue(self):
         total = 0
 
-        for item in self.items:
-            total += item.value
+        for item in self.items: total += item.value
 
         return total
 
-    def itemsToString(self):
-        list_string = ''
+    def printDetails(self):
+        print('*** SACK ***')
 
-        for item in self.items:
-            list_string += f'\n  {item.toString()}'
-        
-        if not list_string: return ' No items'
-        return list_string
+        print(f'Total sack volume: {S.sack_volume}')
+        print(f'Total items volume: {self.getTotalVolume}')
+        print(f'Empty space left: {self.space}')
+        print(f'Total items weight: {self.getTotalWeight}')
+        print(f'Total items value: {self.getTotalValue}')
