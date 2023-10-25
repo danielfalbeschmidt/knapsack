@@ -1,10 +1,10 @@
 import copy
 import numpy as np
 from keras.models import model_from_json
-from settings import *
-from settings import *
-from reserve import *
-from sack import *
+from v5.settings import *
+from v5.settings import *
+from v5.reserve import *
+from v5.sack import *
 
 
 def getFilledSack(reserve):
@@ -34,7 +34,7 @@ for _ in range(S.total_iterations):
     sack_values = []
     reserve = Reserve()
 
-    for __ in range(S.iterations_per_reserve):
+    for __ in range(S.iterations):
         res_copy = copy.deepcopy(reserve)
         filled_sack = getFilledSack(res_copy)
 

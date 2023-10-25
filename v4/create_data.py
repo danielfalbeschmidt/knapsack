@@ -1,7 +1,7 @@
 import copy, datetime
-from settings import *
-from reserve import *
-from sack import *
+from v5.settings import *
+from v5.reserve import *
+from v5.sack import *
 
 def getFilledSack(reserve):
     sack = Sack()

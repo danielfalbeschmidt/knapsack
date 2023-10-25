@@ -1,4 +1,4 @@
-from settings import *
+from v5.settings import *
 from keras.models import Sequential
 from keras.layers import Dense
 
