@@ -4,10 +4,11 @@ import random
 
 class Reserve:
     def __init__(self):
-        self.items = []
         self.picked = [] # picked item indices, 0 = not picked, 1 = picked
 
         while True:
+            self.items = []
+
             for _ in range(S.reserve_item_count):
                 self.items.append(Item())
 
@@ -25,8 +26,6 @@ class Reserve:
         return total_vol
 
     def pickRandom(self):
-        if 0 not in self.picked: return
-
         while True:
             index = random.randint(0, S.reserve_item_count - 1)
             
@@ -36,18 +35,34 @@ class Reserve:
 
             return self.items[index]
         
-    def pickSmallestVolume(self):
-        min_vol = 1
-        min_ind = None
+    def pickBestRemaining(self, sack_space):
+        fit_inds = []
 
         for i in range(S.reserve_item_count):
             if self.picked[i] == 1: continue
+            if self.items[i].volume > sack_space: continue
 
-            if self.items[i].volume < min_vol:
-                min_ind = i
-                min_vol = self.items[i].volume
+            fit_inds.append(i)
 
-        if min_ind: return self.items[min_ind]
+        max_val = 0
+        max_val_ind = None
+
+        for i in fit_inds:
+            if self.items[i].value > max_val:
+                max_val = self.items[i].value
+                max_val_ind = i
+
+        if max_val_ind != None:
+            self.picked[max_val_ind] = 1
+            return self.items[max_val_ind]
+
+
+    def returnItem(self, item):
+        for i in range(S.reserve_item_count):
+            if item.volume == self.items[i].volume \
+            and item.weight == self.items[i].weight:
+                self.picked[i] = 0
+                return
 
     def getItemVolumeSum(self, picks):
         s = 0
@@ -83,6 +98,8 @@ class Reserve:
 
     def printDetails(self):
         print('*** RESREVE ***')
+
+        print(f'Volume sum: {round(self.getItemVolumeSum( [ 1 for _ in range(S.reserve_item_count) ] ), 3)}')
 
         print('Items:')
         for item in self.items:

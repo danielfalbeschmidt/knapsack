@@ -1,8 +1,6 @@
 class S:
-    reserve_item_count = 60 # affects data creation computation time
-
-    # heuristical, too small value -> all items fit (no point in KP)
-    sack_volume = reserve_item_count / 4
+    reserve_item_count = 100 # affects data creation computation time
+    sack_volume = reserve_item_count * 0.2
 
     iterations_per_reserve = 100000 # the number of sacks per one reserve
-    total_iterations = 10000 # training sample count
+    total_iterations = 10 # training sample count
