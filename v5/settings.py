@@ -1,6 +1,12 @@
 class S:
-    reserve_item_count = 100 # affects data creation computation time
+    # dont bother going under 4
+    reserve_item_count = 100
+
+    # too large sack and reserve is gonna have 
+    # hard time bringing items large enough
     sack_volume = reserve_item_count * 0.2
 
-    iterations_per_reserve = 100000 # the number of sacks per one reserve
-    total_iterations = 10 # training sample count
+    # the number of sacks per one reserve
+    iterations_per_reserve = 100000
+
+    total_iterations = 10

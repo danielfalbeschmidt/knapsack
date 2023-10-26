@@ -4,7 +4,10 @@ import random
 
 class Reserve:
     def __init__(self):
-        self.picked = [] # picked item indices, 0 = not picked, 1 = picked
+        # picked item indices, 0 = not picked, 1 = picked
+        self.picked = [ 0 for _ in range(S.reserve_item_count) ]
+
+        watchdog = 100000
 
         while True:
             self.items = []
@@ -12,23 +15,28 @@ class Reserve:
             for _ in range(S.reserve_item_count):
                 self.items.append(Item())
 
+            # not all items are supposed to fit the sack
             if self.getTotalVolume() > S.sack_volume: break
 
-        for _ in range(S.reserve_item_count):
-            self.picked.append(0)
+            if not watchdog:
+                print('Reserve could not create items enough in ' \
+                      'quantity or in volume. Try with smaller sack_volume?')
+                exit(1)
+
+            watchdog -= 1
 
     def getTotalVolume(self):
         total_vol = 0
 
-        for item in self.items:
-            total_vol += item.volume
+        for item in self.items: total_vol += item.volume
 
         return total_vol
 
     def pickRandom(self):
         while True:
+            # lottery index
             index = random.randint(0, S.reserve_item_count - 1)
-            
+            # try another one if already picked
             if self.picked[index] == 1: continue
 
             self.picked[index] = 1
@@ -39,10 +47,17 @@ class Reserve:
         fit_inds = []
 
         for i in range(S.reserve_item_count):
+
+            # only select items not already marked taken
             if self.picked[i] == 1: continue
+
+            # only select items that fit the sack
             if self.items[i].volume > sack_space: continue
 
             fit_inds.append(i)
+
+
+        # amongst fit items, select the one with best value
 
         max_val = 0
         max_val_ind = None
@@ -57,10 +72,14 @@ class Reserve:
             return self.items[max_val_ind]
 
 
-    def returnItem(self, item):
+    def returnToReserve(self, item):
         for i in range(S.reserve_item_count):
+
+            # find matching item index (double checked with vol AND wgt)
             if item.volume == self.items[i].volume \
             and item.weight == self.items[i].weight:
+                
+                # toggle "item picked" to 0
                 self.picked[i] = 0
                 return
 
