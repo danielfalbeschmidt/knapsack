@@ -15,17 +15,17 @@ def getFilledSack(reserve):
             # at least one item should be in the returned sack
             if sack.items: break
 
-    """
-    NOTE: the following optimisation is commented out for pure random performance
-
+    # no point in further search if even the smallest reserve item wouldn't fit
+    if reserve.smallest_item_vol > sack.space: return sack
+    
     while True:
+        # pick the most valuable fit item
         item = reserve.pickBestRemaining(sack.space)
-        if not item: break
 
-        if not sack.add(item):
-            reserve.returnItem(item)
-            break
-    """
+        if not item: break # no fit items left
+
+        if not sack.add(item): # item didn't fit
+            reserve.returnToReserve(item)
 
     return sack
 
@@ -69,7 +69,7 @@ def printDetails(pick_profile):
     print(f'Volume: {round(reserve.getItemVolumeSum(pick_profile), 3)}', end='\t')
     print(f'Weight: {round(reserve.getItemWeightSum(pick_profile), 3)}', end='\t')
     print(f'Value: {round(reserve.getItemValueSum(pick_profile), 3)}', end='\t')
-    print(f'Weight / Volume: {round(reserve.getWeightToVolumeSum(pick_profile), 3)}', end='\t\t')
+    # print(f'Weight / Volume: {round(reserve.getWeightToVolumeSum(pick_profile), 3)}', end='\t\t')
     print(f'Picked items: ', end='\t')
     for pick in pick_profile:
         print(pick, end='')
@@ -105,7 +105,8 @@ for __ in range(S.total_iterations):
 
         value_set.add(sack_value)
 
-        # if this value is highest yet, set as new top score
+        # if this value is highest yet, relate that 
+        # new top score to corresponding pick profile
         if sack_value == max(value_set):
             best_pick = copy.deepcopy(res_copy.picked)
 
@@ -159,5 +160,5 @@ for __ in range(S.total_iterations):
 
 
     printDetails(pick_profile)
-    # printDetails(best_pick)
+    printDetails(best_pick)
     print('')

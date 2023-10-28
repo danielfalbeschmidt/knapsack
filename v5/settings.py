@@ -7,6 +7,6 @@ class S:
     sack_volume = reserve_item_count * 0.2
 
     # the number of sacks per one reserve
-    iterations_per_reserve = 100000
+    iterations_per_reserve = 1000000
 
     total_iterations = 10

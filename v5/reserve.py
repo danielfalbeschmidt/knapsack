@@ -7,16 +7,22 @@ class Reserve:
         # picked item indices, 0 = not picked, 1 = picked
         self.picked = [ 0 for _ in range(S.reserve_item_count) ]
 
+        self.items = self.populate() # generate random reserve items
+
+        self.smallest_item_vol = self.getSmallestItemVolume()
+
+    def populate(self):
+        # trial count, decrement if all items would fit the sack
         watchdog = 100000
 
         while True:
-            self.items = []
+            items = []
 
             for _ in range(S.reserve_item_count):
-                self.items.append(Item())
+                items.append(Item())
 
             # not all items are supposed to fit the sack
-            if self.getTotalVolume() > S.sack_volume: break
+            if self.getTotalVolume(items) > S.sack_volume: break
 
             if not watchdog:
                 print('Reserve could not create items enough in ' \
@@ -25,10 +31,12 @@ class Reserve:
 
             watchdog -= 1
 
-    def getTotalVolume(self):
+        return items
+
+    def getTotalVolume(self, item_list):
         total_vol = 0
 
-        for item in self.items: total_vol += item.volume
+        for item in item_list: total_vol += item.volume
 
         return total_vol
 
@@ -114,6 +122,15 @@ class Reserve:
             if round(picks[i]): s += self.items[i].weight / self.items[i].volume
 
         return s
+    
+    def getSmallestItemVolume(self):
+        smallest_item_volume = 1
+
+        for item in self.items:
+            if item.volume < smallest_item_volume:
+                smallest_item_volume = item.volume
+
+        return smallest_item_volume
 
     def printDetails(self):
         print('*** RESREVE ***')
