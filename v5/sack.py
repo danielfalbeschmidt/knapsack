@@ -1,11 +1,10 @@
-from settings import *
 from item import *
 
 class Sack:
-    def __init__(self):
-        self.volume = S.sack_volume
+    def __init__(self, sack_volume):
+        self.sack_volume = sack_volume
         # empty space left in the sack (is being updated)
-        self.space = self.volume
+        self.space = self.sack_volume
         # sack contents, item objs
         self.items = []
 
@@ -41,15 +40,8 @@ class Sack:
     def printDetails(self):
         print('*** SACK ***')
 
-        print(f'Total sack volume: {S.sack_volume}')
+        print(f'Total sack volume: {self.sack_volume}')
         print(f'Total items volume: {self.getTotalVolume}')
         print(f'Empty space left: {self.space}')
         print(f'Total items weight: {self.getTotalWeight}')
         print(f'Total items value: {self.getTotalValue}')
-
-    # solve probelm
-    def solve(problem):
-        if True: # then is true
-            print(f'{problem} solved')
-
-        return

@@ -1,10 +1,9 @@
 import copy
-from settings import *
 from reserve import *
 from sack import *
 
-def getFilledSack(reserve):
-    sack = Sack()
+def getFilledSack(reserve, sack_volume):
+    sack = Sack(sack_volume)
 
     while True:
         item = reserve.pickRandom()
@@ -29,11 +28,11 @@ def getFilledSack(reserve):
 
     return sack
 
-def moreItems(pick_profile):
+def moreItems(pick_profile, item_count):
     unused_inds = []
     unused_vals = []
 
-    for i in range(S.reserve_item_count):
+    for i in range(item_count):
         # if profile value would be interpreted as 0,
         # it is noted as unused
         if not round(pick_profile[i]):
@@ -47,11 +46,11 @@ def moreItems(pick_profile):
     # for toggled-to-1 values is binary for now on anyway
     pick_profile[unused_max_ind] = 1
 
-def lessItems(pick_profile):
+def lessItems(pick_profile, item_count):
     used_inds = []
     used_vals = []
 
-    for i in range(S.reserve_item_count):
+    for i in range(item_count):
     # if profile value would be interpreted as 1,
     # it is noted as already in use
         if round(pick_profile[i]):
@@ -65,7 +64,7 @@ def lessItems(pick_profile):
     # for toggled-to-0 values is binary for now on anyway
     pick_profile[used_max_ind] = 0
 
-def printDetails(pick_profile):
+def printPickProfile(pick_profile):
     print(f'Volume: {round(reserve.getItemVolumeSum(pick_profile), 3)}', end='\t')
     print(f'Weight: {round(reserve.getItemWeightSum(pick_profile), 3)}', end='\t')
     print(f'Value: {round(reserve.getItemValueSum(pick_profile), 3)}', end='\t')
@@ -76,89 +75,103 @@ def printDetails(pick_profile):
     print('')
 
 
-# original reserve, this is later being copied
-reserve = Reserve()
-reserve.printDetails()
+res_size_rounds = []
 
-# solve problem
-Sack.solve('problem')
+# test on reserves of different sizes
+for res_size_round in range( 9, 11 ):
+    reserve_item_count = res_size_round * 10
+    sack_volume = reserve_item_count * 0.2
+    # original reserve, this is later being copied
+    reserve = Reserve( reserve_item_count )
+    sample_count_rounds = []
 
-print(f'\nSack capacity: {round(S.sack_volume, 3)}\n')
+    print(f'Reserve item count: {reserve_item_count}')
+    print(f'Sack volume: {sack_volume}')
+    
+    # test with different number of samples per each size of reserve
+    for sample_count_round in range( 1, 1001 ):
+        all_picks = [] # [ [ 0, 1, ... ], ... ]
+        all_values = [] # [ 3.45, 4.56, ... ]
+        value_set = { 0.0 } # for duplicate monitoring
+        best_pick = None # [ 0, 1, ... ] later compared to pick_profile
+        sample_count = sample_count_round * 100
 
-for __ in range(S.total_iterations):
-    all_picks = [] # [ [ 0, 1, ... ], ... ]
-    all_values = [] # [ 3.45, 4.56, ... ]
-    value_set = { 0.0 } # for duplicate monitoring
-    best_pick = None # [ 0, 1, ... ] later compared to pick_profile
+        # test with different random item picks
+        for i in range( sample_count ):
+            res_copy = copy.deepcopy(reserve)
+            filled_sack = getFilledSack( res_copy, sack_volume )
 
-    for i in range(S.iterations_per_reserve):
-        res_copy = copy.deepcopy(reserve)
-        filled_sack = getFilledSack(res_copy)
+            # items total volume * weight
+            sack_value = filled_sack.getTotalValue()
+            
+            # if identical sack already exists, don't count it in
+            if sack_value in value_set:
+                i -= 1
+                continue
 
-        # items total volume * weight
-        sack_value = filled_sack.getTotalValue()
+            value_set.add(sack_value)
+
+            # if this value is highest yet, relate that 
+            # new top score to corresponding pick profile
+            if sack_value == max(value_set):
+                best_pick = copy.deepcopy(res_copy.picked)
+
+            all_picks.append(res_copy.picked)
+            all_values.append(sack_value)
+
+
+        r = range(len(all_values))
+        c = range(reserve_item_count)
         
-        # if identical sack already exists, don't count it in
-        if sack_value in value_set:
-            i -= 1
-            continue
+        
+        # min value becomes 0
+        min_value = min(all_values)
+        for i in r: all_values[i] -= min_value
 
-        value_set.add(sack_value)
+        # values scaled to range 0-1
+        max_value = max(all_values)
+        for i in r: all_values[i] /= max_value
 
-        # if this value is highest yet, relate that 
-        # new top score to corresponding pick profile
-        if sack_value == max(value_set):
-            best_pick = copy.deepcopy(res_copy.picked)
+        # each representation of selected reserve items is 
+        # multiplied by the value its corresponding sack yielded
+        for i in r:
+            for j in c: all_picks[i][j] *= all_values[i]
 
-        all_picks.append(res_copy.picked)
-        all_values.append(sack_value)
+        
+        # each value in this list holds the sum of all the
+        # weighted values in corresponding indices of all_picks
+        pick_profile = [ 0 for _ in c ]
+        for i in r:
+            for j in c: pick_profile[j] += all_picks[i][j]
 
+        # min value becomes 0
+        min_cumul = min(pick_profile)
+        for i in c: pick_profile[i] -= min_cumul
 
-    r = range(len(all_values))
-    c = range(S.reserve_item_count)
-    
-    
-    # min value becomes 0
-    min_value = min(all_values)
-    for i in r: all_values[i] -= min_value
-
-    # values scaled to range 0-1
-    max_value = max(all_values)
-    for i in r: all_values[i] /= max_value
-
-    # each representation of selected reserve items is 
-    # multiplied by the value its corresponding sack yielded
-    for i in r:
-        for j in c: all_picks[i][j] *= all_values[i]
-
-    
-    # each value in this list holds the sum of all the
-    # weighted values in corresponding indices of all_picks
-    pick_profile = [ 0 for _ in range(S.reserve_item_count) ]
-    for i in r:
-        for j in c: pick_profile[j] += all_picks[i][j]
-
-    # min value becomes 0
-    min_cumul = min(pick_profile)
-    for i in c: pick_profile[i] -= min_cumul
-
-    # values scaled to range 0-1
-    max_cumul = max(pick_profile)
-    for i in c: pick_profile[i] /= max_cumul
+        # values scaled to range 0-1
+        max_cumul = max(pick_profile)
+        for i in c: pick_profile[i] /= max_cumul
 
 
-    # too modest: toggle to 1 more next most favorable items to pick_profile
-    while reserve.getItemVolumeSum(pick_profile) < S.sack_volume:
-        moreItems(pick_profile)
+        # too modest: toggle to 1 more next most favorable items to pick_profile
+        while reserve.getItemVolumeSum(pick_profile) < sack_volume:
+            moreItems( pick_profile, reserve_item_count )
 
-    # too greedy: toggle to 0 more next most unfavorable items to pick_profile
-    while reserve.getItemVolumeSum(pick_profile) > S.sack_volume:
-        lessItems(pick_profile)
+        # too greedy: toggle to 0 more next most unfavorable items to pick_profile
+        while reserve.getItemVolumeSum(pick_profile) > sack_volume:
+            lessItems( pick_profile, reserve_item_count )
 
-    # pick_profile values are made binary by rounding
-    for i in c: pick_profile[i] = round(pick_profile[i])
+        # pick_profile values are made binary by rounding
+        for i in c: pick_profile[i] = round(pick_profile[i])
 
 
-    printDetails(pick_profile)
-    printDetails(best_pick)
-    print('')
+        print(f'Samples: {sample_count},', \
+              f'Values - ' \
+              f'Avgs: {round(reserve.getItemValueSum(pick_profile), 3)}, ' \
+              f'Best: {round(reserve.getItemValueSum(best_pick), 3)}')
+
+        sample_count_rounds.append(pick_profile)
+
+    res_size_rounds.append(sample_count_rounds)
+
+

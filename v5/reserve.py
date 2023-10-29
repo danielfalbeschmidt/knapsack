@@ -1,11 +1,12 @@
-from settings import *
 from item import *
 import random
 
 class Reserve:
-    def __init__(self):
+    def __init__(self, item_count):
+        self.item_count = item_count
+
         # picked item indices, 0 = not picked, 1 = picked
-        self.picked = [ 0 for _ in range(S.reserve_item_count) ]
+        self.picked = [ 0 for _ in range(self.item_count) ]
 
         self.items = self.populate() # generate random reserve items
 
@@ -18,11 +19,11 @@ class Reserve:
         while True:
             items = []
 
-            for _ in range(S.reserve_item_count):
+            for _ in range(self.item_count):
                 items.append(Item())
 
             # not all items are supposed to fit the sack
-            if self.getTotalVolume(items) > S.sack_volume: break
+            if self.getTotalVolume(items) > ( self.item_count * 0.2 ): break
 
             if not watchdog:
                 print('Reserve could not create items enough in ' \
@@ -43,7 +44,7 @@ class Reserve:
     def pickRandom(self):
         while True:
             # lottery index
-            index = random.randint(0, S.reserve_item_count - 1)
+            index = random.randint(0, self.item_count - 1)
             # try another one if already picked
             if self.picked[index] == 1: continue
 
@@ -54,7 +55,7 @@ class Reserve:
     def pickBestRemaining(self, sack_space):
         fit_inds = []
 
-        for i in range(S.reserve_item_count):
+        for i in range(self.item_count):
 
             # only select items not already marked taken
             if self.picked[i] == 1: continue
@@ -81,7 +82,7 @@ class Reserve:
 
 
     def returnToReserve(self, item):
-        for i in range(S.reserve_item_count):
+        for i in range(self.item_count):
 
             # find matching item index (double checked with vol AND wgt)
             if item.volume == self.items[i].volume \
@@ -94,7 +95,7 @@ class Reserve:
     def getItemVolumeSum(self, picks):
         s = 0
 
-        for i in range(S.reserve_item_count):
+        for i in range(self.item_count):
             if round(picks[i]): s += self.items[i].volume
 
         return s
@@ -102,7 +103,7 @@ class Reserve:
     def getItemWeightSum(self, picks):
         s = 0
 
-        for i in range(S.reserve_item_count):
+        for i in range(self.item_count):
             if round(picks[i]): s += self.items[i].weight
 
         return s
@@ -110,7 +111,7 @@ class Reserve:
     def getItemValueSum(self, picks):
         s = 0
 
-        for i in range(S.reserve_item_count):
+        for i in range(self.item_count):
             if round(picks[i]): s += self.items[i].volume * self.items[i].weight
 
         return s
@@ -118,7 +119,7 @@ class Reserve:
     def getWeightToVolumeSum(self, picks):
         s = 0
 
-        for i in range(S.reserve_item_count):
+        for i in range(self.item_count):
             if round(picks[i]): s += self.items[i].weight / self.items[i].volume
 
         return s
@@ -135,7 +136,7 @@ class Reserve:
     def printDetails(self):
         print('*** RESREVE ***')
 
-        print(f'Volume sum: {round(self.getItemVolumeSum( [ 1 for _ in range(S.reserve_item_count) ] ), 3)}')
+        print(f'Volume sum: {round(self.getItemVolumeSum( [ 1 for _ in range(self.item_count) ] ), 3)}')
 
         print('Items:')
         for item in self.items:

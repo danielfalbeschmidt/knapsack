@@ -58,7 +58,7 @@ for _ in range(S.volume_category_count):
 
 counter = 0
 
-for _ in range(S.total_iterations):
+for _ in range(S.item_iterations):
     sack_distrs = []
     sack_values = []
     reserve = Reserve()

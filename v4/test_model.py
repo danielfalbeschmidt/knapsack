@@ -29,7 +29,7 @@ model.load_weights(S.weightsfile)
 model.compile(loss='mean_squared_error', optimizer='adam')
 
 
-for _ in range(S.total_iterations):
+for _ in range(S.item_iterations):
     sack_distrs = []
     sack_values = []
     reserve = Reserve()
