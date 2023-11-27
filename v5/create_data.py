@@ -77,7 +77,7 @@ def printPickProfile(pick_profile):
 
 
 # test on reserves of different sizes
-for res_size_round in range( 11, 12 ):
+for res_size_round in range( 8, 9 ):
     reserve_item_count = 2 ** res_size_round
     sack_volume = reserve_item_count * 0.2
     # original reserve, this is later being copied
@@ -86,11 +86,12 @@ for res_size_round in range( 11, 12 ):
 
     avg_vals = []
     best_vals = []
+    heur_vals = []
 
     print(f'Reserve item count: {reserve_item_count}')
-    print(f'Sack volume: {round(sack_volume, 3)}')
+    print(f'Sack volume: {round(sack_volume, 3)}')  
 
-    count_round_iterator = [ i for i in range( 2, 18 ) ]
+    count_round_iterator = [ i for i in range( 12, 13 ) ]
     
     # test with different number of samples per each size of reserve
     for sample_count_round in count_round_iterator:
@@ -169,25 +170,33 @@ for res_size_round in range( 11, 12 ):
         for i in c: pick_profile[i] = round(pick_profile[i])
 
 
+        heur_profile = [ 0 for _ in range(reserve.item_count) ]
+        while reserve.getItemVolumeSum(heur_profile) < sack_volume:
+            moreItems( heur_profile, reserve_item_count )
+
+
         avg_vals.append(reserve.getItemValueSum(pick_profile))
         best_vals.append(reserve.getItemValueSum(best_pick))
+        heur_vals.append(reserve.getItemValueSum(heur_profile))
 
-        flip = ''
-        if reserve.getItemValueSum(pick_profile) > reserve.getItemValueSum(best_pick):
-            flip = ' -> Avgs > Best !'
+
+        # flip = ''
+        # if reserve.getItemValueSum(pick_profile) > reserve.getItemValueSum(best_pick):
+        #     flip = ' -> Avgs > Best !'
 
         print(f'Samples: {sample_count},', \
               f'Values - ' \
               f'Avgs: {round(reserve.getItemValueSum(pick_profile), 3)}, ' \
-              f'Best: {round(reserve.getItemValueSum(best_pick), 3)}' \
-              f'{flip}')
+              f'Best: {round(reserve.getItemValueSum(best_pick), 3)}, ' \
+              f'Heur: {round(reserve.getItemValueSum(heur_profile), 3)}')
+            #   f'{flip}')
         
 
-    plt.plot(count_round_iterator, avg_vals)
-    plt.plot(count_round_iterator, best_vals)
-    plt.legend([ 'Avgs', 'Best' ])
-    plt.title(f'Reserve item count: {reserve_item_count}')
-    plt.xlabel('Samples (2^x)')
-    plt.ylabel('Scores')
-    plt.savefig(f'graphs/{reserve_item_count}.svg', format='svg')
-    plt.clf()
+    # plt.plot(count_round_iterator, avg_vals)
+    # plt.plot(count_round_iterator, best_vals)
+    # plt.legend([ 'Avgs', 'Best' ])
+    # plt.title(f'Reserve item count: {reserve_item_count}')
+    # plt.xlabel('Samples (2^x)')
+    # plt.ylabel('Scores')
+    # plt.savefig(f'graphs/{reserve_item_count}x.svg', format='svg')
+    # plt.clf()
